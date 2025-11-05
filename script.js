@@ -149,6 +149,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
         gameOverElem.style.display = 'flex';
     }
+    /* === Controles táctiles: integrar con el juego === */
+    (function() {
+  const dirToKey = {
+    'up': 'ArrowUp',
+    'down': 'ArrowDown',
+    'left': 'ArrowLeft',
+    'right': 'ArrowRight'
+  };
+
+  function sendMoveKey(keyName) {
+    // Primera opción: si existe una función global que maneje la entrada (p. ej. handleInput)
+    try {
+      if (typeof window.handleInput === 'function') {
+        // Llamada directa (mejor si tu juego ya exporta una función)
+        window.handleInput(keyName);
+        return;
+      }
+    } catch (e) {
+      // continuar al fallback si hay algún error
+      console.warn('Error llamando handleInput:', e);
+    }
+
+    // Fallback: despachar evento KeyboardEvent para imitar la tecla
+    // Esto hace que cualquier listener de 'keydown' en document lo reciba.
+    const ev = new KeyboardEvent('keydown', { key: keyName, bubbles: true, cancelable: true });
+    document.dispatchEvent(ev);
+  }
+
+  // atajo: acepta clicks y también touchstart para mejor respuesta táctil
+  const buttons = document.querySelectorAll('#touch-controls .arrow');
+  buttons.forEach(btn => {
+    // click normal
+    btn.addEventListener('click', (e) => {
+      const dir = btn.dataset.dir;
+      const key = dirToKey[dir];
+      sendMoveKey(key);
+      e.preventDefault();
+    });
+
+    // touchstart reduce latencia en móviles (y evita el retardo de 300ms en navegadores antiguos)
+    btn.addEventListener('touchstart', (e) => {
+      const dir = btn.dataset.dir;
+      const key = dirToKey[dir];
+      sendMoveKey(key);
+      // prevenir doble disparo (touch -> click)
+      e.preventDefault();
+    }, { passive: false });
+  });
+})();
     
 
     document.addEventListener('keydown', event => {
