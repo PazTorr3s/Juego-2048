@@ -159,23 +159,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('restart-btn').addEventListener('click', reiniciarJuego);
 
     inicializarJuego();
-    // Controles táctiles en pantalla
-document.querySelectorAll('#touch-controls .arrow').forEach(button => {
-  button.addEventListener('click', () => {
-    const dir = button.dataset.dir;
-    switch (dir) {
-      case 'up':
-        handleInput('ArrowUp');
-        break;
-      case 'down':
-        handleInput('ArrowDown');
-        break;
-      case 'left':
-        handleInput('ArrowLeft');
-        break;
-      case 'right':
-        handleInput('ArrowRight');
-        break;
-    }
-  });
 });
